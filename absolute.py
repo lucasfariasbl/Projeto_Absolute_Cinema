@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import random
+from filmes_utils import listar_generos, filtrar_por_genero 
 
 # Configuração da página
 st.set_page_config(
@@ -27,10 +28,10 @@ def main_page():
     st.sidebar.header("Filtros")
     
     # Filtro por gênero
-    genres = sorted(df['Genre'].unique())
+    
     selected_genre = st.sidebar.selectbox(
         "Selecione um gênero:",
-        ["Todos"] + list(genres)
+        listar_generos(df)
     )
     
     # Filtro por ano
@@ -52,8 +53,7 @@ def main_page():
     # Aplicar filtros
     filtered_df = df.copy()
     
-    if selected_genre != "Todos":
-        filtered_df = filtered_df[filtered_df['Genre'] == selected_genre]
+    filtered_df = filtrar_por_genero(filtered_df, selected_genre)
     
     filtered_df = filtered_df[
         (filtered_df['Year'] >= year_range[0]) & 
@@ -105,10 +105,9 @@ def suggestion_page():
     # Filtros para sugestão
     st.sidebar.header("Filtros para Sugestão")
     
-    genres = sorted(df['Genre'].unique())
     selected_genre_suggestion = st.sidebar.selectbox(
-        "Gênero preferido:",
-        ["Qualquer"] + list(genres),
+        "Selecione um gênero:",
+        listar_generos(df),
         key="suggestion_genre"
     )
     
@@ -132,8 +131,7 @@ def suggestion_page():
         # Aplicar filtros
         filtered_suggestions = df.copy()
         
-        if selected_genre_suggestion != "Qualquer":
-            filtered_suggestions = filtered_suggestions[filtered_suggestions['Genre'] == selected_genre_suggestion]
+        filtered_suggestions = filtrar_por_genero(filtered_suggestions, selected_genre_suggestion)
         
         filtered_suggestions = filtered_suggestions[
             (filtered_suggestions['Year'] >= min_year_suggestion) &

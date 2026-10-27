@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import random
+from filmes_utils import listar_generos, filtrar_por_genero
 
 # Carregar dados dos filmes
 
@@ -13,9 +14,10 @@ st.title("🎲 Me Sugira um Filme!")
 col1, col2 = st.columns(2)
 
 with col1:
+    
     genero = st.selectbox(
         "Gênero:",
-        ["Qualquer"] + sorted(filmes['Genre'].unique().tolist())
+        listar_generos(filmes)
     )
 
 with col2:
@@ -31,8 +33,7 @@ if st.button("🎯 Sugerir Filme Aleatório", type="primary"):
     # Aplicar filtros
     filmes_filtrados = filmes[filmes['Rating'] >= nota_minima]
     
-    if genero != "Qualquer":
-        filmes_filtrados = filmes_filtrados[filmes_filtrados['Genre'] == genero]
+    filmes_filtrados = filtrar_por_genero(filmes_filtrados, genero)
     
     if len(filmes_filtrados) > 0:
         # Escolher filme aleatório
